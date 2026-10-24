@@ -34,7 +34,7 @@ jobs:
       - name: Build APK
         run: |
           chmod +x gradlew
-          ./gradlew assembleAfatRelease --no-daemon -x lint
+          ./gradlew :TMessagesProj_App:assembleAfatRelease --no-daemon -x lint -x :TMessagesProj_AppHuawei:assembleAfatRelease
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
