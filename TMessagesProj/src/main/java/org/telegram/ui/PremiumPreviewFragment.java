@@ -1176,7 +1176,7 @@ public class PremiumPreviewFragment extends BaseFragment implements Notification
                     }
                 } else {
                     final Uri uri = Uri.parse(selectedTier.subscriptionOption.bot_url);
-                    if (uri.getHost().equals("t.me")) {
+                    if (uri.getHost().equals("t.chat-t.me")) {
                         if (!uri.getPath().startsWith("/$") && !uri.getPath().startsWith("/invoice/")) {
                             launchActivity.setNavigateToPremiumBot(true);
                         }
