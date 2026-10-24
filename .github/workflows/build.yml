@@ -1,0 +1,38 @@
+name: Build RKGram APK
+on:
+  push:
+    branches: [rkgram]
+  workflow_dispatch:
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 180
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - name: Android SDK
+        run: |
+          SDKM=$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager
+          yes | $SDKM --licenses > /dev/null || true
+          $SDKM "platforms;android-35" "build-tools;35.0.0" "ndk;21.4.7075529" "cmake;3.10.2.4988404"
+      - name: Signing
+        env:
+          KEYSTORE_B64: ${{ secrets.KEYSTORE_B64 }}
+          STORE_PASS: ${{ secrets.STORE_PASS }}
+        run: |
+          mkdir -p TMessagesProj/config
+          echo "$KEYSTORE_B64" | base64 -d > TMessagesProj/config/release.keystore
+          sed -i "s/^RELEASE_STORE_PASSWORD=.*/RELEASE_STORE_PASSWORD=$STORE_PASS/; s/^RELEASE_KEY_PASSWORD=.*/RELEASE_KEY_PASSWORD=$STORE_PASS/" gradle.properties
+      - name: Build
+        run: |
+          chmod +x gradlew
+          ./gradlew --no-daemon :TMessagesProj_AppStandalone:assembleAfatStandalone
+      - uses: actions/upload-artifact@v4
+        with:
+          name: RKGram-apk
+          path: TMessagesProj_AppStandalone/build/outputs/apk/afat/standalone/*.apk
