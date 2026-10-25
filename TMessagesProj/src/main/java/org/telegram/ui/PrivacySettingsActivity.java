@@ -714,7 +714,7 @@ public class PrivacySettingsActivity extends BaseFragment implements Notificatio
         autoDeleteMesages = rowCount++;
         passcodeRow = rowCount++;
         if (getMessagesController().config.settingsDisplayPasskeys.get() && Build.VERSION.SDK_INT >= 28 && BuildVars.SUPPORTS_PASSKEYS) {
-            passkeysRow = rowCount++;
+            passkeysRow = -1;
         }
         if (currentPassword != null ? currentPassword.login_email_pattern != null : SharedConfig.hasEmailLogin) {
             emailLoginRow = rowCount++;
@@ -741,7 +741,7 @@ public class PrivacySettingsActivity extends BaseFragment implements Notificatio
         groupsDetailRow = -1;
         if (!getMessagesController().premiumFeaturesBlocked() || getUserConfig().isPremium()) {
             voicesRow = rowCount++;
-            noncontactsRow = rowCount++;
+            noncontactsRow = -1;
         } else {
             voicesRow = -1;
             noncontactsRow = -1;

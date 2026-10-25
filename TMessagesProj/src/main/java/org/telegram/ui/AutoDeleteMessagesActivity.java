@@ -38,7 +38,7 @@ public class AutoDeleteMessagesActivity extends BaseFragment implements Notifica
 
     private final static int ONE_DAY = 60 * 24;
     private final static int ONE_WEEK = 60 * 24 * 7;
-    private final static int ONE_MONTH = 60 * 24 * 31;
+    private final static int ONE_MONTH = 60 * 24 * 30;
 
     RadioCellInternal offCell;
     RadioCellInternal afterOneDay;
@@ -113,33 +113,25 @@ public class AutoDeleteMessagesActivity extends BaseFragment implements Notifica
         offCell = new RadioCellInternal(getContext());
         offCell.setText(LocaleController.getString(R.string.ShortMessageLifetimeForever), false, true);
         offCell.time = 0;
-        checkBoxContainer.addView(offCell);
 
         afterOneDay = new RadioCellInternal(getContext());
         afterOneDay.setText(LocaleController.getString(R.string.AutoDeleteAfter1Day), false, true);
         afterOneDay.time = ONE_DAY;
-        checkBoxContainer.addView(afterOneDay);
 
         afterOneWeek = new RadioCellInternal(getContext());
         afterOneWeek.setText(LocaleController.getString(R.string.AutoDeleteAfter1Week), false, true);
         afterOneWeek.time = ONE_WEEK;
-        checkBoxContainer.addView(afterOneWeek);
 
         afterOneMonth = new RadioCellInternal(getContext());
-        afterOneMonth.setText(LocaleController.getString(R.string.AutoDeleteAfter1Month), false, true);
+        afterOneMonth.setText(LocaleController.formatString("AutoDeleteAfterShort", R.string.AutoDeleteAfterShort, LocaleController.formatTTLString(ONE_MONTH * 60)), false, true);
         afterOneMonth.time = ONE_MONTH;
         checkBoxContainer.addView(afterOneMonth);
 
         customTimeButton = new RadioCellInternal(getContext());
         customTimeButton.setText(LocaleController.getString(R.string.SetCustomTime), false, false);
         customTimeButton.hideRadioButton();
-        checkBoxContainer.addView(customTimeButton);
 
-        arrayList.add(offCell);
-        arrayList.add(afterOneDay);
-        arrayList.add(afterOneWeek);
         arrayList.add(afterOneMonth);
-        arrayList.add(customTimeButton);
 
         updateItems();
 
@@ -245,6 +237,10 @@ public class AutoDeleteMessagesActivity extends BaseFragment implements Notifica
                 selectRadioButton(arrayList.get(i), showBulletin);
                 return;
             }
+        }
+
+        if (scheduleDate >= 0) {
+            return;
         }
 
         for (int i = 0; i < arrayList.size(); i++) {

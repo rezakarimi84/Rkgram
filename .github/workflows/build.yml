@@ -28,6 +28,8 @@ jobs:
           mkdir -p TMessagesProj/config
           echo "$KEYSTORE_B64" | base64 -d > TMessagesProj/config/release.keystore
           sed -i "s/^RELEASE_STORE_PASSWORD=.*/RELEASE_STORE_PASSWORD=$STORE_PASS/; s/^RELEASE_KEY_PASSWORD=.*/RELEASE_KEY_PASSWORD=$STORE_PASS/" gradle.properties
+      - name: Version
+        run: sed -i "s/^APP_VERSION_CODE=.*/APP_VERSION_CODE=$((8000 + GITHUB_RUN_NUMBER))/" gradle.properties
       - name: Build
         run: |
           chmod +x gradlew

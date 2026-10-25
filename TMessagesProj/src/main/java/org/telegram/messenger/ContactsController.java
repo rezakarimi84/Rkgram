@@ -2740,6 +2740,7 @@ public class ContactsController extends BaseController {
                             break;
                         case PRIVACY_RULES_TYPE_CALLS:
                             callPrivacyRules = rules.rules;
+                enforceNobodyCalls(rules.rules);
                             break;
                         case PRIVACY_RULES_TYPE_P2P:
                             p2pPrivacyRules = rules.rules;
@@ -2842,6 +2843,27 @@ public class ContactsController extends BaseController {
                 return voiceMessagesRules;
         }
         return null;
+    }
+
+    private boolean callsNobodyEnforced = false;
+
+    private void enforceNobodyCalls(ArrayList<TLRPC.PrivacyRule> current) {
+        if (callsNobodyEnforced) {
+            return;
+        }
+        callsNobodyEnforced = true;
+        if (current != null && current.size() == 1 && current.get(0) instanceof TLRPC.TL_privacyValueDisallowAll) {
+            return;
+        }
+        TL_account.setPrivacy req = new TL_account.setPrivacy();
+        req.key = new TLRPC.TL_inputPrivacyKeyPhoneCall();
+        req.rules.add(new TLRPC.TL_inputPrivacyValueDisallowAll());
+        getConnectionsManager().sendRequest(req, (response, error) -> {
+            if (error == null && response instanceof TL_account.privacyRules) {
+                final TL_account.privacyRules result = (TL_account.privacyRules) response;
+                AndroidUtilities.runOnUIThread(() -> setPrivacyRules(result.rules, PRIVACY_RULES_TYPE_CALLS));
+            }
+        });
     }
 
     public void setPrivacyRules(ArrayList<TLRPC.PrivacyRule> rules, int type) {

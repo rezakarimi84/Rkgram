@@ -1497,8 +1497,13 @@ public class PrivacyControlActivity extends BaseFragment implements Notification
             messageRow = rowCount++;
         }
         sectionRow = rowCount++;
-        everybodyRow = rowCount++;
-        myContactsRow = rowCount++;
+        if (rulesType == PRIVACY_RULES_TYPE_CALLS) {
+            everybodyRow = -1;
+            myContactsRow = -1;
+        } else {
+            everybodyRow = rowCount++;
+            myContactsRow = rowCount++;
+        }
         if (
             rulesType == PRIVACY_RULES_TYPE_PHOTO ||
             rulesType == PRIVACY_RULES_TYPE_BIO ||
@@ -1544,7 +1549,7 @@ public class PrivacyControlActivity extends BaseFragment implements Notification
                     shareDetailRow = rowCount++;
                 }
             }
-        } else if (rulesType != PRIVACY_RULES_TYPE_VOICE_MESSAGES || getUserConfig().isPremium()) {
+        } else if (rulesType != PRIVACY_RULES_TYPE_CALLS && (rulesType != PRIVACY_RULES_TYPE_VOICE_MESSAGES || getUserConfig().isPremium())) {
             shareSectionRow = rowCount++;
             if (currentType == TYPE_NOBODY || currentType == TYPE_CONTACTS) {
                 alwaysShareRow = rowCount++;
